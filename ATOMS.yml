@@ -1,0 +1,37 @@
+      # ATOMS.yml — catalog manifest for identity-atoms
+      #
+      # See https://github.com/convergent-systems-co/atoms-spec for the canonical schema this conforms to.
+
+      name: identity-atoms
+      version: 0.1.0
+      spec: atoms-spec/v1
+      domain: identity-atoms.com
+      ecosystem:
+        federation: xdao.co
+        redirect: identity.xdao.co
+
+      purpose: |
+        Identity primitives unified across vendors — auth methods, claim types, trust frameworks, key and certificate types — defined once and composable into identity profiles, federated setups, and persona templates.
+
+      atomTypes:
+        - auth-method
+- claim-type
+- trust-framework
+- key-cert-type
+
+      compositionType: identities
+      compositionDir: identities
+
+      ruleTypes:
+        - trust-chain
+- claim-validation
+- key-rotation
+
+      runtimeConsumers:
+        - aish
+- universal-bus
+
+      license: Apache-2.0
+      maintainers:
+        - name: Convergent Systems
+          contact: maintainers@xdao.co
