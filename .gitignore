@@ -598,3 +598,7 @@ msbuild.wrn
 
 # AI tooling state (checkpoints, transient logs)
 .ai/
+
+# Override .NET template [Ss]cripts rule — keep our scripts/ tracked
+!scripts/
+!scripts/**
