@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://identity-atoms.com/schemas/atom-v1.json",
+  "title": "identity-atoms v1 atom",
+  "description": "A single atom in the identity-atoms catalog. Discriminated by the top-level `type` field; one of: auth-method, claim-type, trust-framework, key-cert-type. Each type pins additional required sub-objects via allOf/if-then.",
+  "type": "object",
+  "required": ["schema", "type", "id", "version", "name"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "https://identity-atoms.com/schemas/atom-v1.json"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["auth-method", "claim-type", "trust-framework", "key-cert-type"]
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$",
+      "description": "URL-safe slug; unique within the atom's type; must match the filename stem."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "maxLength": 40 },
+      "uniqueItems": true
+    },
+    "specs": {
+      "type": "array",
+      "description": "Authoritative external specs (RFCs, OASIS, W3C, IETF drafts) defining this primitive.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "url": { "type": "string", "format": "uri" }
+        }
+      },
+      "uniqueItems": true
+    },
+
+    "auth_method": {
+      "type": "object",
+      "description": "Only for type=auth-method. Capability annotations for an authentication protocol.",
+      "additionalProperties": false,
+      "required": ["protocol", "credential_form", "transport"],
+      "properties": {
+        "protocol": {
+          "type": "string",
+          "enum": ["oauth2", "oauth2.1", "oidc", "saml", "webauthn", "ssh-key", "mtls"]
+        },
+        "credential_form": {
+          "type": "string",
+          "enum": ["bearer-token", "id-token-jwt", "assertion-xml", "public-key-credential", "asymmetric-keypair", "x509-certificate"]
+        },
+        "transport": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["http", "https", "tcp", "tls", "ssh"] },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "interactive": {
+          "type": "boolean",
+          "description": "True if the protocol normally requires user interaction (browser redirect, biometric prompt). False for machine-to-machine."
+        },
+        "supports_refresh": {
+          "type": "boolean",
+          "description": "True if the protocol defines a refresh mechanism that issues new credentials without re-authentication."
+        },
+        "key_types": {
+          "type": "array",
+          "description": "Refs to key-cert-type atoms this protocol can use (e.g., 'key-cert-type/ed25519').",
+          "items": { "type": "string", "pattern": "^[a-z-]+/[a-z0-9-]+$" },
+          "uniqueItems": true
+        }
+      }
+    },
+
+    "claim": {
+      "type": "object",
+      "description": "Only for type=claim-type. Semantic definition of a single claim shape.",
+      "additionalProperties": false,
+      "required": ["claim_name", "value_type", "semantics"],
+      "properties": {
+        "claim_name": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "value_type": {
+          "type": "string",
+          "enum": ["string", "uri", "integer", "boolean", "array", "object"]
+        },
+        "semantics": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "registered_in": {
+          "type": "string",
+          "enum": ["iana-jwt", "iana-saml", "openid-connect-core", "custom"]
+        }
+      }
+    },
+
+    "trust_framework": {
+      "type": "object",
+      "description": "Only for type=trust-framework. Topology of trust relations.",
+      "additionalProperties": false,
+      "required": ["topology", "roots"],
+      "properties": {
+        "topology": {
+          "type": "string",
+          "enum": ["hierarchical-ca", "web-of-trust", "federation-bridge", "self-sovereign"]
+        },
+        "roots": {
+          "type": "array",
+          "description": "Identifiers of root authorities (CA names, root keys, federation IDs). Strings only; resolution is consumer-defined.",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "intermediate_depth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16,
+          "description": "Maximum permitted intermediate-CA chain depth between root and leaf."
+        }
+      }
+    },
+
+    "key_cert": {
+      "type": "object",
+      "description": "Only for type=key-cert-type. Cryptographic key or certificate kind.",
+      "additionalProperties": false,
+      "required": ["algorithm", "key_form"],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "enum": ["ed25519", "rsa", "ecdsa", "x25519", "p256", "p384", "p521"]
+        },
+        "key_form": {
+          "type": "string",
+          "enum": ["raw-public-key", "jwk", "x509-certificate", "ssh-public-key", "pem"]
+        },
+        "key_size_bits": {
+          "type": "integer",
+          "minimum": 128,
+          "maximum": 16384,
+          "description": "Effective key size in bits. For ed25519/x25519 use 256; for ecdsa-p256 use 256; for rsa use modulus length."
+        },
+        "rotation_recommended_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3650,
+          "description": "Recommended maximum key age in days before rotation is required. Consumed by the key-rotation rule evaluator."
+        },
+        "rotation_grace_days": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 365,
+          "description": "Grace window after rotation_recommended_days during which the key is 'grace' rather than 'expired'."
+        },
+        "hardware_backed": {
+          "type": "boolean",
+          "description": "True if the key material is expected to live in an HSM, TPM, or secure enclave."
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "auth-method" } }, "required": ["type"] },
+      "then": { "required": ["auth_method"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "claim-type" } }, "required": ["type"] },
+      "then": { "required": ["claim"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "trust-framework" } }, "required": ["type"] },
+      "then": { "required": ["trust_framework"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "key-cert-type" } }, "required": ["type"] },
+      "then": { "required": ["key_cert"] }
+    }
+  ]
+}

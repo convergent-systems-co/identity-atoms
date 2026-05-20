@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://identity-atoms.com/schemas/federated-composition-v1.json",
+  "title": "identity-atoms v1 federated composition",
+  "description": "Federated identity composition: assembles multiple identity-provider compositions with declared trust chains between them. Used for cross-org bridging where an identity originating at one IdP is accepted at another.",
+  "type": "object",
+  "required": ["schema", "id", "version", "name", "providers", "trust_chains"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "https://identity-atoms.com/schemas/federated-composition-v1.json"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$"
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "description": { "type": "string", "maxLength": 500 },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "maxLength": 40 },
+      "uniqueItems": true
+    },
+    "providers": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "description": "Two or more identity providers participating in the federation.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["alias", "role", "composition_ref"],
+        "properties": {
+          "alias": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "description": "Local alias used to reference this provider in trust_chains."
+          },
+          "role": {
+            "type": "string",
+            "enum": ["originating-idp", "relying-party", "bridge", "broker"]
+          },
+          "composition_ref": {
+            "type": "string",
+            "pattern": "^identities/[a-z0-9][a-z0-9-]*$",
+            "description": "Ref to an identities/<id> composition that this provider exposes."
+          },
+          "org": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "Human-readable organization name. Optional but recommended for cross-org examples."
+          }
+        }
+      }
+    },
+    "trust_chains": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Directed trust edges between providers; consumed by rules/trust_chain.py.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to", "via"],
+        "properties": {
+          "from": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "description": "Provider alias whose assertions are being trusted."
+          },
+          "to": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "description": "Provider alias that consumes the asserted identity."
+          },
+          "via": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "description": "Ordered list of key-cert-type refs whose signatures must validate end-to-end.",
+            "items": {
+              "type": "string",
+              "pattern": "^key-cert-type/[a-z0-9][a-z0-9-]*$"
+            }
+          },
+          "claim_mapping": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Optional map from originating-IdP claim names to relying-party claim names."
+          }
+        }
+      }
+    }
+  }
+}

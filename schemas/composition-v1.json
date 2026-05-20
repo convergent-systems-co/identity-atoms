@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://identity-atoms.com/schemas/composition-v1.json",
+  "title": "identity-atoms v1 composition (persona template)",
+  "description": "An identity composition assembles atoms into an identity profile. Lives at identities/<id>/definition.json. Persona-template shape; the v0.3 aish persona loader contract.",
+  "type": "object",
+  "required": ["schema", "id", "version", "name", "auth_methods", "keys", "claims"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "https://identity-atoms.com/schemas/composition-v1.json"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$"
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "description": { "type": "string", "maxLength": 500 },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "maxLength": 40 },
+      "uniqueItems": true
+    },
+    "auth_methods": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ref"],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "pattern": "^auth-method/[a-z0-9][a-z0-9-]*$",
+            "description": "Ref to an atom under atoms/auth-method/<id>.json"
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "0 = highest priority. Loader tries auth methods in priority order."
+          }
+        }
+      }
+    },
+    "keys": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ref"],
+        "properties": {
+          "ref": {
+            "type": "string",
+            "pattern": "^key-cert-type/[a-z0-9][a-z0-9-]*$"
+          },
+          "location": {
+            "type": "string",
+            "enum": ["keychain", "file", "env", "hsm", "tpm", "yubikey", "ssh-agent"]
+          },
+          "purpose": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["sign", "encrypt", "auth", "tls-client", "tls-server", "ssh-user", "ssh-host"] },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required"],
+      "properties": {
+        "required": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "description": "Either a claim name (e.g. 'sub') or a ref to a claim-type atom (e.g. 'claim-type/sub')."
+          }
+        },
+        "optional": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "trust_framework": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref"],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "pattern": "^trust-framework/[a-z0-9][a-z0-9-]*$"
+        }
+      }
+    }
+  }
+}

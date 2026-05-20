@@ -1,0 +1,4 @@
+name: identity-atoms
+version: 0.1.0
+tooling:
+  test_command: python3 scripts/validate.py && pytest -v
