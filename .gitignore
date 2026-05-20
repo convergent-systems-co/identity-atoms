@@ -595,3 +595,6 @@ msbuild.wrn
 # Visual Studio 2015
 .vs/
 ### END: community/DotNet/core
+
+# AI tooling state (checkpoints, transient logs)
+.ai/
