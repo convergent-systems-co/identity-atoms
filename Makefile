@@ -22,17 +22,17 @@ check: ## Astro check (type + diagnostics) on the active site
 preview: ## Preview the production build locally
 	cd web && $(NPM) run preview
 
-tf-init: ## terraform init for the selected env
-	cd infra/terraform/envs/$(ENV) && terraform init
+tf-init: ## tofu init for the selected env
+	cd infra/terraform/envs/$(ENV) && tofu init
 
-tf-plan: ## terraform plan for the selected env
-	cd infra/terraform/envs/$(ENV) && terraform plan
+tf-plan: ## tofu plan for the selected env
+	cd infra/terraform/envs/$(ENV) && tofu plan
 
-tf-apply: ## terraform apply for the selected env
-	cd infra/terraform/envs/$(ENV) && terraform apply
+tf-apply: ## tofu apply for the selected env
+	cd infra/terraform/envs/$(ENV) && tofu apply
 
-tf-fmt: ## terraform fmt over infra/
-	terraform fmt -recursive infra/
+tf-fmt: ## tofu fmt over infra/
+	tofu fmt -recursive infra/
 
 fmt: tf-fmt ## Format everything (currently TF only)
 
