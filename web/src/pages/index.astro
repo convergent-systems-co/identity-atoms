@@ -1,0 +1,39 @@
+---
+const title = 'Site';
+const description = 'Replace this with the real meta description before launch.';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+
+		<title>{title}</title>
+	</head>
+	<body>
+		<main>
+			<h1>{title}</h1>
+			<p>{description}</p>
+			<p>
+				Edit <code>src/pages/index.astro</code> to customize this page.
+				See the
+				<a href="https://docs.astro.build/">Astro documentation</a>
+				for layouts, components, and content collections.
+			</p>
+		</main>
+	</body>
+</html>
