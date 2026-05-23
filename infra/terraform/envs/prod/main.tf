@@ -8,29 +8,58 @@ terraform {
   }
 }
 
-# CLOUDFLARE_API_TOKEN from env, never in code. See ~/.ai/Common.md §4.
-# Token scopes required for this module (mirrors the core-infra token
-# decomposition at convergent-systems-co/core-infra/terraform/cloudflare/*):
+# Multi-provider setup: this module touches account-level Pages resources
+# and zone-level DNS records. After the 2026-05-23 core-infra token split,
+# each plane has its own narrow API token (see ~/.ai/Common.md §4 and
+# convergent-systems-co/core-infra/terraform/cloudflare/{account,dns}-token).
 #
-#   - Account → Cloudflare Pages → Edit
-#       (created by terraform/cloudflare/account-token in core-infra)
-#   - Zone → DNS → Edit  on the identity-atoms.com zone
-#       (created by terraform/cloudflare/dns-token in core-infra)
-#
-# The intended operator workflow is: apply core-infra's token modules
-# once, capture the value into the org secret store, then export that
-# value as CLOUDFLARE_API_TOKEN before running this module.
-provider "cloudflare" {}
+# Tokens passed in as sensitive TF variables. Populate from 1Password before
+# apply (see variables below) or via the cs-tofu wrapper at
+# convergent-systems-co/core-infra/scripts/cs-tofu.
 
-module "pages_project" {
-  source = "git::https://github.com/convergent-systems-co/core-infra.git//terraform/cloudflare/pages-project?ref=v0.1.0"
-
-  cloudflare_account_id = var.cloudflare_account_id
-  project_name          = "identity-atoms"
-  production_branch     = "main"
-  custom_domain         = "identity-atoms.com"
-  zone_id               = var.zone_id
+provider "cloudflare" {
+  alias     = "account"
+  api_token = var.account_token
 }
+
+provider "cloudflare" {
+  alias     = "dns"
+  api_token = var.dns_token
+}
+
+# --- Pages project + custom domain (account-scoped) -------------------------
+
+resource "cloudflare_pages_project" "this" {
+  provider          = cloudflare.account
+  account_id        = var.cloudflare_account_id
+  name              = "identity-atoms"
+  production_branch = "main"
+}
+
+resource "cloudflare_pages_domain" "custom" {
+  provider     = cloudflare.account
+  account_id   = var.cloudflare_account_id
+  project_name = cloudflare_pages_project.this.name
+  name         = "identity-atoms.com"
+}
+
+# --- DNS record at the zone apex (zone-scoped) ------------------------------
+
+resource "cloudflare_dns_record" "pages_cname" {
+  provider = cloudflare.dns
+  zone_id  = var.zone_id
+  name     = "identity-atoms.com"
+  type     = "CNAME"
+  content  = "${cloudflare_pages_project.this.name}.pages.dev"
+  proxied  = true
+  ttl      = 1 # 1 = "auto" — required when proxied
+
+  comment = "Cloudflare Pages apex — managed by terraform"
+
+  depends_on = [cloudflare_pages_domain.custom]
+}
+
+# --- Inputs -----------------------------------------------------------------
 
 variable "cloudflare_account_id" {
   description = "Cloudflare account ID that owns the Pages project."
@@ -42,16 +71,30 @@ variable "zone_id" {
   type        = string
 }
 
+variable "account_token" {
+  description = "Cloudflare API token with Account Pages Edit scope. Minted by terraform/cloudflare/account-token in core-infra. Populate from 'Convergent Systems - Account' in 1Password Developer vault."
+  type        = string
+  sensitive   = true
+}
+
+variable "dns_token" {
+  description = "Cloudflare API token with Zone DNS Edit scope. Minted by terraform/cloudflare/dns-token in core-infra. Populate from 'Convergent Systems - DNS' in 1Password Developer vault."
+  type        = string
+  sensitive   = true
+}
+
+# --- Outputs ----------------------------------------------------------------
+
 output "project_name" {
-  value = module.pages_project.project_name
+  value = cloudflare_pages_project.this.name
 }
 
 output "subdomain" {
-  value       = module.pages_project.subdomain
+  value       = cloudflare_pages_project.this.subdomain
   description = "Default *.pages.dev hostname for the project."
 }
 
 output "custom_domain" {
-  value       = module.pages_project.custom_domain
-  description = "Custom hostname attached to the Pages project."
+  value       = cloudflare_pages_domain.custom.name
+  description = "Apex custom domain attached to the Pages project."
 }
