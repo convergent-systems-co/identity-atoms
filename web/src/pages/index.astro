@@ -10,7 +10,7 @@ const counts = {
   rules: catalog.rules.length,
 };
 const byType: Record<string, number> = {};
-for (const a of catalog.atoms) byType[a.type] = (byType[a.type] ?? 0) + 1;
+for (const a of catalog.atoms as any[]) byType[a.type] = (byType[a.type] ?? 0) + 1;
 ---
 <Base title="Home" description={tagline}>
   <section style="margin-bottom: 2rem;">

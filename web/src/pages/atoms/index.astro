@@ -4,7 +4,7 @@ import AtomCard from "../../components/AtomCard.astro";
 import catalog from "../../../public/exports/catalog.json";
 
 const byType: Record<string, any[]> = {};
-for (const a of catalog.atoms) {
+for (const a of catalog.atoms as any[]) {
   byType[a.type] = byType[a.type] ?? [];
   byType[a.type].push(a);
 }
