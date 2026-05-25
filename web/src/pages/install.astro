@@ -1,0 +1,24 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Install" description="How to obtain a local copy of identity-atoms.">
+  <h1>Install</h1>
+
+  <h2>As an HTTPS consumer (recommended)</h2>
+  <pre><code>curl https://identity-atoms.com/exports/catalog.json -o catalog.json</code></pre>
+
+  <h2>As a git submodule of the umbrella</h2>
+  <pre><code>git clone --recurse-submodules https://github.com/convergent-systems-co/atoms.git</code></pre>
+
+  <h2>As a standalone clone</h2>
+  <pre><code>git clone https://github.com/convergent-systems-co/identity-atoms.git
+cd identity-atoms
+python3 scripts/validate.py
+python3 scripts/build-exports.py</code></pre>
+
+  <h2>Dependencies</h2>
+  <ul>
+    <li>Python 3.11+ with <code>jsonschema</code></li>
+    <li>Node 22+ and pnpm (only for local <code>web/</code> builds)</li>
+  </ul>
+</Base>

@@ -1,0 +1,21 @@
+---
+import Base from "../../layouts/Base.astro";
+import AtomCard from "../../components/AtomCard.astro";
+import catalog from "../../../public/exports/catalog.json";
+
+const atoms = catalog.atoms
+  .filter((a: any) => a.type === "auth-method")
+  .sort((a: any, b: any) => a.id.localeCompare(b.id));
+---
+<Base title="Auth Methods" description="Auth method atoms — authentication primitives for identity profiles and federated setups.">
+  <h1>Auth Methods</h1>
+  <p>{atoms.length} auth method atom{atoms.length === 1 ? "" : "s"} — each defines a canonical authentication primitive.</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr)); gap: 1rem; margin-top: 2rem;">
+    {atoms.map((atom: any) => <AtomCard atom={atom} />)}
+  </div>
+
+  {atoms.length === 0 && (
+    <p style="color: var(--muted); margin-top: 2rem;">No auth-method atoms seeded yet. See <a href="/install/">install</a> to contribute.</p>
+  )}
+</Base>

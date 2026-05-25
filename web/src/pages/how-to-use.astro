@@ -1,0 +1,37 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="How to use" description="How to consume identity-atoms in your application.">
+  <h1>How to use identity-atoms</h1>
+
+  <h2>Read the catalog over HTTPS</h2>
+  <p>Every artifact is served under stable URLs with correct content-types:</p>
+  <pre><code>curl https://identity-atoms.com/exports/catalog.json
+curl https://identity-atoms.com/atoms/auth-method/oauth2.json
+curl https://identity-atoms.com/identities/federated-persona.json
+curl https://identity-atoms.com/schemas/atom-v1.json</code></pre>
+
+  <h2>Resolve an identity composition</h2>
+  <p>An identity composition assembles auth methods, claim types, and trust frameworks into a complete
+  identity profile. To instantiate, fetch each referenced atom and compose:</p>
+
+  <pre><code>{`// pseudo-code
+const composition = await fetch("/identities/federated-persona.json").then(r => r.json());
+const authMethod = await fetch(uriToUrl(composition.references.auth_method.ref)).then(r => r.json());
+const claimTypes = await Promise.all(
+  composition.references.claim_types.map(r => fetch(uriToUrl(r.ref)).then(r => r.json()))
+);
+const trustFramework = await fetch(uriToUrl(composition.references.trust_framework.ref)).then(r => r.json());
+const identity = buildIdentityProfile({ authMethod, claimTypes, trustFramework });`}</code></pre>
+
+  <h2>Compatibility rules</h2>
+  <p>Rules in <a href="/exports/catalog.json"><code>/exports/catalog.json</code></a> (under the <code>rules</code>
+  key) declare predicates over atoms. Example: a <code>trust-chain</code> rule may require that a given
+  <code>auth-method</code> is paired with specific <code>claim-validation</code> policies. A composition
+  that violates a <code>require</code>-effect rule is malformed.</p>
+
+  <h2>Cross-vendor portability</h2>
+  <p>v0.1 ships the catalog and its JSON Schema. Adapters to specific identity vendors (OIDC providers,
+  SAML, WebAuthn) are v0.2 work — they translate <code>auth-method</code> atoms into vendor-native
+  protocol flows and bind <code>trust-framework</code> atoms to the vendor's trust model.</p>
+</Base>

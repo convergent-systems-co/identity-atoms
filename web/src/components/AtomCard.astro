@@ -1,0 +1,16 @@
+---
+const { atom } = Astro.props;
+const href = `/atoms/${atom.type}/${atom.id}/`;
+---
+<article style="border: 1px solid var(--border); border-radius: 0.5rem; padding: 1rem; background: var(--card);">
+  <header style="display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 0.5rem;">
+    <h3 style="margin: 0;"><a href={href}>{atom.name}</a></h3>
+    <code style="color: var(--muted); font-size: 0.75rem;">{atom.type} · v{atom.version}</code>
+  </header>
+  {atom.description && <p style="margin: 0.5rem 0; color: var(--muted);">{atom.description}</p>}
+  {atom.tags && (
+    <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.5rem;">
+      {atom.tags.map((tag: string) => <span style="font-size: 0.75rem; background: #f4ece4; padding: 0.125rem 0.5rem; border-radius: 0.25rem;">{tag}</span>)}
+    </div>
+  )}
+</article>
