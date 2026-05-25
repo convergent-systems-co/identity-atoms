@@ -1,0 +1,53 @@
+---
+const { title, description } = Astro.props;
+const siteTitle = title ? `${title} · IDENTITY-Atoms` : "IDENTITY-Atoms";
+const siteDesc = description ?? "Identity primitives unified across vendors — auth methods, claim types, trust frameworks, key and certificate types.";
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{siteTitle}</title>
+    <meta name="description" content={siteDesc} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="icon" type="image/svg+xml" href="https://brand-atoms.com/dist/brands/atom-family/1.0.0/assets/favicon.svg" />
+    <link rel="preconnect" href="https://brand-atoms.com" />
+    <link rel="stylesheet" href="https://brand-atoms.com/dist/brands/atom-family/1.0.0/css/tokens.css" />
+    <link rel="stylesheet" href="https://brand-atoms.com/dist/brands/atom-family/1.0.0/ui/atoms-catalog.css" />
+    <style is:global>
+      :root { --fg: #1a1a1a; --bg: #fafafa; --accent: #6b3d1f; --muted: #666; --card: #fff; --border: #e0e0e0; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: ui-sans-serif, system-ui, sans-serif; color: var(--fg); background: var(--bg); line-height: 1.5; }
+      a { color: var(--accent); }
+      header { border-bottom: 1px solid var(--border); background: var(--card); }
+      header nav { max-width: 64rem; margin: 0 auto; padding: 1rem; display: flex; gap: 1.5rem; align-items: center; }
+      header nav strong { font-size: 1.125rem; }
+      header nav a { text-decoration: none; color: var(--muted); }
+      header nav a[aria-current="page"] { color: var(--fg); font-weight: 600; }
+      main { max-width: 64rem; margin: 0 auto; padding: 2rem 1rem; }
+      footer { border-top: 1px solid var(--border); padding: 2rem 1rem; text-align: center; color: var(--muted); font-size: 0.875rem; }
+      code { background: #f0f0f0; padding: 0.125rem 0.25rem; border-radius: 0.25rem; font-size: 0.9em; }
+      pre { background: #f0f0f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
+      h1, h2, h3 { line-height: 1.2; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <strong><a href="/">IDENTITY-Atoms</a></strong>
+        <a href="/atoms/">Atoms</a>
+        <a href="/auth-method/">Auth Methods</a>
+        <a href="/how-to-use/">How to use</a>
+        <a href="/install/">Install</a>
+        <a href="https://github.com/convergent-systems-co/identity-atoms">GitHub</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      Apache-2.0 · <a href="https://xdao.co">xdao.co</a>
+    </footer>
+  </body>
+</html>

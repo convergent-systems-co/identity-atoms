@@ -1,0 +1,34 @@
+---
+import Base from "../../layouts/Base.astro";
+import AtomCard from "../../components/AtomCard.astro";
+import catalog from "../../../public/exports/catalog.json";
+
+const byType: Record<string, any[]> = {};
+for (const a of catalog.atoms) {
+  byType[a.type] = byType[a.type] ?? [];
+  byType[a.type].push(a);
+}
+for (const list of Object.values(byType)) list.sort((a, b) => a.id.localeCompare(b.id));
+const types = Object.keys(byType).sort();
+---
+<Base title="Atoms" description="Every atom in the identity-atoms catalog, grouped by type.">
+  <h1>Atoms</h1>
+  <p>{catalog.atoms.length} atoms across {types.length} types.</p>
+
+  <nav style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0 2rem;">
+    {types.map(t => <a href={`#${t}`} style="padding: 0.25rem 0.75rem; background: #f4ece4; border-radius: 0.25rem; text-decoration: none;">{t} ({byType[t].length})</a>)}
+  </nav>
+
+  {types.length === 0 && (
+    <p style="color: var(--muted);">Seeding in progress — auth-method, claim-type, trust-framework, key-cert-type atoms will appear here.</p>
+  )}
+
+  {types.map(type => (
+    <section id={type} style="margin-bottom: 2.5rem;">
+      <h2 style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">{type}</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr)); gap: 1rem; margin-top: 1rem;">
+        {byType[type].map(atom => <AtomCard atom={atom} />)}
+      </div>
+    </section>
+  ))}
+</Base>
