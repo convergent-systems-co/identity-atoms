@@ -1,8 +1,11 @@
 ---
-const title = "IDENTITY-Atoms";
-const tagline = "Identity — auth methods, claims, trust frameworks. Part of the convergent-systems.co atoms ecosystem.";
+import catalog from "../../public/exports/catalog.json";
+const title = "identity-atoms";
+const tagline = "Identity primitives unified across vendors — auth methods, claim types, trust frameworks, key and certificate types.";
+const counts = { atoms: catalog.atoms.length, compositions: catalog.compositions.length, rules: catalog.rules.length };
+const byType: Record<string, number> = {};
+for (const a of catalog.atoms) byType[a.type] = (byType[a.type] ?? 0) + 1;
 ---
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -14,11 +17,7 @@ const tagline = "Identity — auth methods, claims, trust frameworks. Part of th
     <link rel="preconnect" href="https://brand-atoms.com" />
     <link rel="stylesheet" href="https://brand-atoms.com/dist/brands/atom-family/1.0.0/css/tokens.css" />
     <link rel="stylesheet" href="https://brand-atoms.com/dist/brands/atom-family/1.0.0/ui/atoms-catalog.css" />
-    <style>
-      body { min-height: 100vh; }
-      .hero-mark { width: 160px; height: 160px; margin-bottom: 20px; object-fit: contain; }
-      .sidenav-wordmark { width: 140px; object-fit: contain; display: block; }
-    </style>
+    <style>body{min-height:100vh}.hero-mark{width:160px;height:160px;margin-bottom:20px;object-fit:contain}.sidenav-wordmark{width:140px;object-fit:contain;display:block}</style>
   </head>
   <body>
     <div class="shell">
@@ -28,21 +27,36 @@ const tagline = "Identity — auth methods, claims, trust frameworks. Part of th
           <h1>{title}</h1>
           <p class="lede">{tagline}</p>
         </section>
-        <div class="status">
-          <p><strong>Status:</strong> bootstrap. Catalog content lands once the canonical <code>identity</code> schema is published in <a href="https://github.com/convergent-systems-co/schema-atoms">schema-atoms</a>.</p>
-          <p>Source: <a href="https://github.com/convergent-systems-co/identity-atoms">github.com/convergent-systems-co/identity-atoms</a></p>
-        </div>
-        <footer>
-          Part of the <a href="https://github.com/convergent-systems-co/atoms">atoms ecosystem</a>. Apache-2.0.
-        </footer>
+        <p style="font-size:1.125rem;color:var(--muted);max-width:40rem;">Auth methods, claim types, trust frameworks, key and certificate types defined once and composable into identity profiles, federated setups, and persona templates. The identity layer the ecosystem stands on.</p>
+        <h2>Catalog at v{catalog.version}</h2>
+        <ul>
+          <li><strong>{counts.atoms}</strong> atoms across {Object.keys(byType).length} types</li>
+          <li><strong>{counts.compositions}</strong> identity compositions</li>
+          <li><strong>{counts.rules}</strong> compatibility rules</li>
+        </ul>
+        <h2>Atom types</h2>
+        <ul>
+          {Object.entries(byType).map(([type, n]) => (
+            <li><a href={`/atoms/?type=${type}`}>{type}</a> — {n} atoms</li>
+          ))}
+          {Object.keys(byType).length === 0 && (
+            <li style="color:var(--muted)">Seeding in progress — auth-method, claim-type, trust-framework, key-cert-type</li>
+          )}
+        </ul>
+        <h2>Civilization-grade properties</h2>
+        <ul>
+          <li><strong>Typed</strong> — every atom validates against a JSON Schema.</li>
+          <li><strong>Versioned</strong> — every atom has a semver <code>version</code> field.</li>
+          <li><strong>Machine-readable</strong> — <a href="/exports/catalog.json">/exports/catalog.json</a> is the canonical manifest.</li>
+          <li><strong>Composable</strong> — compositions reference atoms by ID; references resolve in CI.</li>
+          <li><strong>Open</strong> — Apache-2.0 licensed.</li>
+          <li><strong>Durable</strong> — no external dependencies in the hot path.</li>
+        </ul>
+        <footer>Part of the <a href="https://github.com/convergent-systems-co/atoms">atoms ecosystem</a>. Apache-2.0.</footer>
       </main>
       <nav class="sidenav">
-        <a class="brand" href="/">
-          <img src="https://brand-atoms.com/dist/brands/atom-family/1.0.0/assets/atom-family-wordmark.png" alt="ATOMS" class="sidenav-wordmark" />
-        </a>
-        <div class="aside-meta">
-          <a class="meta-link" href="https://github.com/convergent-systems-co/identity-atoms">github ↗</a>
-        </div>
+        <a class="brand" href="/"><img src="https://brand-atoms.com/dist/brands/atom-family/1.0.0/assets/atom-family-wordmark.png" alt="ATOMS" class="sidenav-wordmark" /></a>
+        <div class="aside-meta"><a class="meta-link" href="https://github.com/convergent-systems-co/identity-atoms">github ↗</a></div>
       </nav>
     </div>
   </body>
