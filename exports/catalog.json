@@ -1,7 +1,7 @@
 {
   "catalog": "identity-atoms",
   "version": "0.1.0",
-  "built_at": "2026-05-26T15:43:57+00:00",
+  "built_at": "2026-05-26T17:24:22+00:00",
   "atoms": [
     {
       "schema": "https://identity-atoms.com/schemas/atom-v1.json",
@@ -68,6 +68,38 @@
       ]
     }
   ],
-  "compositions": [],
+  "compositions": [
+    {
+      "schema": "https://identity-atoms.com/schemas/composition-v1.json",
+      "type": "identity",
+      "id": "convergent-systems-polliard-v1",
+      "version": "1.0.0",
+      "name": "Thomas Polliard @ convergent-systems-co",
+      "description": "Identity composition for the principal of the convergent-systems-co organization.",
+      "tags": [
+        "principal",
+        "convergent-systems-co",
+        "github"
+      ],
+      "references": {
+        "trust_framework": {
+          "ref": "identity-atoms://atoms/trust-framework/convergent-systems-co",
+          "version": "1.0.0"
+        },
+        "auth_methods": [
+          {
+            "ref": "identity-atoms://atoms/auth-method/github-oauth",
+            "version": "1.0.0"
+          }
+        ],
+        "claim_types": [
+          {
+            "ref": "identity-atoms://atoms/claim-type/github-org-membership",
+            "version": "1.0.0"
+          }
+        ]
+      }
+    }
+  ],
   "rules": []
 }
