@@ -1,0 +1,12 @@
+{
+  "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+  "type": "auth-method",
+  "id": "oidc",
+  "version": "1.0.0",
+  "name": "OpenID Connect 1.0",
+  "description": "Identity layer on top of OAuth 2.0. Provides ID tokens (JWT) with standardized claims for user identity.",
+  "algorithm": "oidc",
+  "trust_level": "authenticated",
+  "issuer": "(OIDC provider)",
+  "tags": ["oidc", "oauth2", "jwt", "identity", "authentication"]
+}

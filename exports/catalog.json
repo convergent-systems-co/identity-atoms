@@ -1,7 +1,7 @@
 {
   "catalog": "identity-atoms",
   "version": "0.1.0",
-  "built_at": "2026-05-26T17:24:22+00:00",
+  "built_at": "2026-05-26T21:06:17+00:00",
   "atoms": [
     {
       "schema": "https://identity-atoms.com/schemas/atom-v1.json",
@@ -16,6 +16,100 @@
       "tags": [
         "github",
         "oauth2",
+        "authentication"
+      ]
+    },
+    {
+      "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+      "type": "auth-method",
+      "id": "oauth2-1",
+      "version": "1.0.0",
+      "name": "OAuth 2.1",
+      "description": "OAuth 2.1 consolidates OAuth 2.0 best practices — PKCE required, no implicit flow, no resource owner password credentials. Used by modern authorization servers.",
+      "algorithm": "oauth2-pkce",
+      "trust_level": "authenticated",
+      "issuer": "(oauth authorization server)",
+      "tags": [
+        "oauth2",
+        "oauth2.1",
+        "pkce",
+        "authorization",
+        "authentication"
+      ]
+    },
+    {
+      "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+      "type": "auth-method",
+      "id": "oidc",
+      "version": "1.0.0",
+      "name": "OpenID Connect 1.0",
+      "description": "Identity layer on top of OAuth 2.0. Provides ID tokens (JWT) with standardized claims for user identity.",
+      "algorithm": "oidc",
+      "trust_level": "authenticated",
+      "issuer": "(OIDC provider)",
+      "tags": [
+        "oidc",
+        "oauth2",
+        "jwt",
+        "identity",
+        "authentication"
+      ]
+    },
+    {
+      "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+      "type": "auth-method",
+      "id": "saml2",
+      "version": "1.0.0",
+      "name": "SAML 2.0",
+      "description": "XML-based standard for exchanging authentication and authorization data between identity providers and service providers. Enterprise SSO.",
+      "algorithm": "saml2",
+      "trust_level": "signed",
+      "issuer": "(SAML IdP)",
+      "tags": [
+        "saml",
+        "saml2",
+        "sso",
+        "enterprise",
+        "authentication",
+        "xml"
+      ]
+    },
+    {
+      "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+      "type": "auth-method",
+      "id": "ssh-key",
+      "version": "1.0.0",
+      "name": "SSH Public Key",
+      "description": "Asymmetric key authentication for SSH connections. Requires the private key to sign a challenge from the server.",
+      "algorithm": "ed25519-or-rsa",
+      "trust_level": "signed",
+      "issuer": "local-keyring",
+      "tags": [
+        "ssh",
+        "public-key",
+        "asymmetric",
+        "ed25519",
+        "rsa",
+        "authentication"
+      ]
+    },
+    {
+      "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+      "type": "auth-method",
+      "id": "webauthn",
+      "version": "1.0.0",
+      "name": "WebAuthn / FIDO2",
+      "description": "W3C standard for public-key cryptographic authentication using hardware security keys or biometrics. Phishing-resistant.",
+      "algorithm": "webauthn",
+      "trust_level": "verified",
+      "issuer": "authenticator-device",
+      "tags": [
+        "webauthn",
+        "fido2",
+        "passkey",
+        "biometric",
+        "hardware-key",
+        "phishing-resistant",
         "authentication"
       ]
     },
