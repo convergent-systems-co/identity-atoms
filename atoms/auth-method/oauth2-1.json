@@ -1,0 +1,12 @@
+{
+  "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+  "type": "auth-method",
+  "id": "oauth2-1",
+  "version": "1.0.0",
+  "name": "OAuth 2.1",
+  "description": "OAuth 2.1 consolidates OAuth 2.0 best practices — PKCE required, no implicit flow, no resource owner password credentials. Used by modern authorization servers.",
+  "algorithm": "oauth2-pkce",
+  "trust_level": "authenticated",
+  "issuer": "(oauth authorization server)",
+  "tags": ["oauth2", "oauth2.1", "pkce", "authorization", "authentication"]
+}

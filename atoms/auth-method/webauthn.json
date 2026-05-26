@@ -1,0 +1,12 @@
+{
+  "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+  "type": "auth-method",
+  "id": "webauthn",
+  "version": "1.0.0",
+  "name": "WebAuthn / FIDO2",
+  "description": "W3C standard for public-key cryptographic authentication using hardware security keys or biometrics. Phishing-resistant.",
+  "algorithm": "webauthn",
+  "trust_level": "verified",
+  "issuer": "authenticator-device",
+  "tags": ["webauthn", "fido2", "passkey", "biometric", "hardware-key", "phishing-resistant", "authentication"]
+}
