@@ -1,0 +1,15 @@
+{
+  "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+  "type": "trust-framework",
+  "id": "convergent-systems-co",
+  "version": "1.0.0",
+  "name": "convergent-systems-co Internal Trust Framework",
+  "description": "The trust model for the convergent-systems-co ecosystem. Levels: anonymous < authenticated < signed < verified.",
+  "trust_level": "verified",
+  "issuer": "convergent-systems-co",
+  "claims": [
+    { "key": "trust_level", "description": "Asserted trust tier: anonymous, authenticated, signed, or verified" },
+    { "key": "levels", "description": "Ordered list of trust levels from least to most privileged" }
+  ],
+  "tags": ["trust", "framework", "internal", "convergent-systems-co"]
+}
