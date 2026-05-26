@@ -1,0 +1,14 @@
+{
+  "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+  "type": "claim-type",
+  "id": "github-org-membership",
+  "version": "1.0.0",
+  "name": "GitHub Organization Membership",
+  "description": "Verifiable claim that an identity is a member of a specific GitHub organization",
+  "trust_level": "authenticated",
+  "issuer": "github.com",
+  "claims": [
+    { "key": "organization_member", "description": "The GitHub organization slug the identity belongs to" }
+  ],
+  "tags": ["github", "organization", "membership", "claim"]
+}

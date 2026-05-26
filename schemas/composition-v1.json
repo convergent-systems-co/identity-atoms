@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://identity-atoms.com/schemas/composition-v1.json",
+  "title": "identity-atoms v1 composition",
+  "description": "An identity composition assembling auth methods, claims, and a trust framework into a complete identity configuration.",
+  "type": "object",
+  "required": ["schema", "type", "id", "version", "name", "references"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "https://identity-atoms.com/schemas/composition-v1.json"
+    },
+    "type": { "type": "string", "const": "identity" },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$"
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "description": { "type": "string", "maxLength": 500 },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "maxLength": 40 },
+      "uniqueItems": true
+    },
+    "references": {
+      "type": "object",
+      "required": ["trust_framework"],
+      "additionalProperties": false,
+      "properties": {
+        "trust_framework":  { "$ref": "#/$defs/ref" },
+        "auth_methods":     { "type": "array", "items": { "$ref": "#/$defs/ref" }, "uniqueItems": true },
+        "claim_types":      { "type": "array", "items": { "$ref": "#/$defs/ref" }, "uniqueItems": true },
+        "key_cert_types":   { "type": "array", "items": { "$ref": "#/$defs/ref" }, "uniqueItems": true }
+      }
+    }
+  },
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "required": ["ref", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "ref": {
+          "type": "string",
+          "pattern": "^identity-atoms://atoms/[a-z-]+/[a-z0-9-]+$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[A-Za-z0-9.-]+)?$"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "https://identity-atoms.com/schemas/atom-v1.json",
+  "type": "auth-method",
+  "id": "github-oauth",
+  "version": "1.0.0",
+  "name": "GitHub OAuth",
+  "description": "GitHub OAuth 2.0 for user authentication. Used for GitHub.com and GitHub Enterprise access.",
+  "algorithm": "oauth2",
+  "trust_level": "authenticated",
+  "issuer": "github.com",
+  "tags": ["github", "oauth2", "authentication"]
+}
