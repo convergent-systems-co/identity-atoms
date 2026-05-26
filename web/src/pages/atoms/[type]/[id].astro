@@ -4,7 +4,7 @@ import catalog from "../../../../public/exports/catalog.json";
 
 export function getStaticPaths() {
   return catalog.atoms.map((atom: any) => ({
-    params: { type: atom.type, id: atom.id },
+    params: { type: atom.type, id: atom.id.split('/').pop() },
     props: { atom },
   }));
 }
