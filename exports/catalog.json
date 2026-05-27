@@ -1,7 +1,7 @@
 {
   "catalog": "identity-atoms",
   "version": "0.1.0",
-  "built_at": "2026-05-26T21:06:17+00:00",
+  "built_at": "2026-05-27T17:52:46+00:00",
   "atoms": [
     {
       "schema": "https://identity-atoms.com/schemas/atom-v1.json",
@@ -174,6 +174,122 @@
         "principal",
         "convergent-systems-co",
         "github"
+      ],
+      "references": {
+        "trust_framework": {
+          "ref": "identity-atoms://atoms/trust-framework/convergent-systems-co",
+          "version": "1.0.0"
+        },
+        "auth_methods": [
+          {
+            "ref": "identity-atoms://atoms/auth-method/github-oauth",
+            "version": "1.0.0"
+          }
+        ],
+        "claim_types": [
+          {
+            "ref": "identity-atoms://atoms/claim-type/github-org-membership",
+            "version": "1.0.0"
+          }
+        ]
+      }
+    },
+    {
+      "schema": "https://identity-atoms.com/schemas/composition-v1.json",
+      "type": "identity",
+      "id": "none",
+      "version": "1.0.0",
+      "name": "None",
+      "description": "Anonymous/unauthenticated identity. No credential required. Binds to the minimal policy floor only.",
+      "tags": [
+        "none",
+        "anonymous",
+        "unauthenticated",
+        "olympus"
+      ],
+      "references": {
+        "trust_framework": {
+          "ref": "identity-atoms://atoms/trust-framework/convergent-systems-co",
+          "version": "1.0.0"
+        }
+      }
+    },
+    {
+      "schema": "https://identity-atoms.com/schemas/composition-v1.json",
+      "type": "identity",
+      "id": "operator",
+      "version": "1.0.0",
+      "name": "Operator",
+      "description": "Human operator identity. Authenticated via GitHub OAuth with organization membership claim. Grants standard operator access to Olympus capabilities.",
+      "tags": [
+        "operator",
+        "human",
+        "authenticated",
+        "olympus"
+      ],
+      "references": {
+        "trust_framework": {
+          "ref": "identity-atoms://atoms/trust-framework/convergent-systems-co",
+          "version": "1.0.0"
+        },
+        "auth_methods": [
+          {
+            "ref": "identity-atoms://atoms/auth-method/github-oauth",
+            "version": "1.0.0"
+          }
+        ],
+        "claim_types": [
+          {
+            "ref": "identity-atoms://atoms/claim-type/github-org-membership",
+            "version": "1.0.0"
+          }
+        ]
+      }
+    },
+    {
+      "schema": "https://identity-atoms.com/schemas/composition-v1.json",
+      "type": "identity",
+      "id": "security-architect",
+      "version": "1.0.0",
+      "name": "Security Architect",
+      "description": "Security architect identity with elevated access for security review, threat modeling, and audit operations. Requires signed identity claim.",
+      "tags": [
+        "security",
+        "architect",
+        "elevated",
+        "olympus"
+      ],
+      "references": {
+        "trust_framework": {
+          "ref": "identity-atoms://atoms/trust-framework/convergent-systems-co",
+          "version": "1.0.0"
+        },
+        "auth_methods": [
+          {
+            "ref": "identity-atoms://atoms/auth-method/github-oauth",
+            "version": "1.0.0"
+          }
+        ],
+        "claim_types": [
+          {
+            "ref": "identity-atoms://atoms/claim-type/github-org-membership",
+            "version": "1.0.0"
+          }
+        ]
+      }
+    },
+    {
+      "schema": "https://identity-atoms.com/schemas/composition-v1.json",
+      "type": "identity",
+      "id": "sre",
+      "version": "1.0.0",
+      "name": "SRE",
+      "description": "Site Reliability Engineer identity. Elevated access for production operations. Requires signed identity claim from the convergent-systems-co trust framework.",
+      "tags": [
+        "sre",
+        "elevated",
+        "production",
+        "olympus"
       ],
       "references": {
         "trust_framework": {
