@@ -1,0 +1,123 @@
+# Publish an atom directly to this catalog without a PR.
+# Called by:
+#   gh workflow run publish-atom.yml -f type=<type> -f slug=<slug> -f atom_json_b64=<base64>
+#
+# Security: all user-supplied inputs are passed via env vars, never shell-interpolated.
+
+name: Publish atom
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: "Atom type (must match a declared atom_types entry in ATOMS.yml)"
+        required: true
+      slug:
+        description: "Atom slug (kebab-case file name, e.g. my-atom)"
+        required: true
+      atom_json_b64:
+        description: "Base64-encoded atom JSON payload"
+        required: true
+      overwrite:
+        description: "Overwrite existing atom (true | false)"
+        required: false
+        default: "false"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install jsonschema
+
+      - name: Decode, validate, and write atom
+        env:
+          ATOM_JSON_B64: ${{ github.event.inputs.atom_json_b64 }}
+          ATOM_TYPE: ${{ github.event.inputs.type }}
+          ATOM_SLUG: ${{ github.event.inputs.slug }}
+          OVERWRITE: ${{ github.event.inputs.overwrite }}
+        run: |
+          echo "$ATOM_JSON_B64" | base64 -d > /tmp/atom.json
+
+          python3 - <<'PYEOF'
+          import json, sys, os, pathlib
+
+          try:
+              import jsonschema
+          except ImportError:
+              pass
+
+          atom_type = os.environ["ATOM_TYPE"]
+          atom_slug = os.environ["ATOM_SLUG"]
+          overwrite  = os.environ.get("OVERWRITE", "false").lower() == "true"
+
+          atom = json.loads(pathlib.Path("/tmp/atom.json").read_text())
+          print("Atom:", json.dumps(atom, indent=2)[:400])
+
+          # Validate id matches slug
+          expected_id = f"{atom_type}/{atom_slug}"
+          if atom.get("id") and atom.get("id") != expected_id:
+              sys.exit(f"ERROR: atom.id={atom['id']!r} != expected {expected_id!r}")
+
+          # Schema validation (try atom-v1.json, fall back gracefully)
+          schema_path = pathlib.Path(f"schemas/atom-v1.json")
+          if schema_path.exists():
+              schema = json.loads(schema_path.read_text())
+              try:
+                  jsonschema.validate(atom, schema)
+                  print(f"✓ validates against {schema_path}")
+              except jsonschema.ValidationError as e:
+                  sys.exit(f"✗ schema error: {e.message}")
+          else:
+              print("⚠ no schema/atom-v1.json — skipping validation")
+
+          dest = pathlib.Path(f"atoms/{atom_type}/{atom_slug}.json")
+          if dest.exists() and not overwrite:
+              sys.exit(f"ERROR: {dest} exists; pass overwrite=true to replace")
+          dest.parent.mkdir(parents=True, exist_ok=True)
+          dest.write_text(json.dumps(atom, indent=2, ensure_ascii=False) + "\n")
+          print(f"✓ wrote {dest}")
+          PYEOF
+
+      - name: Rebuild catalog
+        run: python3 scripts/build-exports.py
+
+      - name: Commit, PR, and merge
+        env:
+          ATOM_TYPE: ${{ github.event.inputs.type }}
+          ATOM_SLUG: ${{ github.event.inputs.slug }}
+          ACTOR: ${{ github.actor }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="atom-publish/$(date +%Y%m%d%H%M%S)-${ATOM_TYPE}-${ATOM_SLUG}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add "atoms/${ATOM_TYPE}/${ATOM_SLUG}.json" exports/catalog.json
+          git diff --cached --stat
+          git commit -m "atom(${ATOM_TYPE}): publish ${ATOM_SLUG} [via ${ACTOR}]"
+          git push origin "$BRANCH"
+
+          PR_URL=$(gh pr create \
+            --title "atom(${ATOM_TYPE}): publish ${ATOM_SLUG}" \
+            --body "Auto-published via workflow_dispatch by @${ACTOR}." \
+            --base main \
+            --head "$BRANCH")
+          echo "PR: $PR_URL"
+
+          gh pr merge "$PR_URL" \
+            --merge \
+            --delete-branch \
+            --subject "atom(${ATOM_TYPE}): publish ${ATOM_SLUG} [via ${ACTOR}]"
+
+          echo "✓ Published and merged"
